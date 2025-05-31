@@ -246,7 +246,6 @@ const app = new Hono()
         userId: user.$id,
       });
 
-
       if (!member) {
         return c.json({ error: "Unauthorized" }, 401);
       }
@@ -257,6 +256,17 @@ const app = new Hono()
       const lastMonthStart = startOfMonth(subMonths(now, 1));
       const lastMonthEnd = endOfMonth(subMonths(now, 1));
 
+      // Get all tasks for this project
+      const allTasks = await databases.listDocuments(
+        DATABASE_ID,
+        TASKS_ID,
+        [
+          Query.equal("projectId", projectId),
+          Query.limit(1000)
+        ]
+      );
+
+      // Monthly comparison data
       const thisMonthTasks = await databases.listDocuments(
         DATABASE_ID,
         TASKS_ID,
@@ -303,34 +313,7 @@ const app = new Hono()
       );
 
       const assignedTaskCount = thisMonthAssignedTasks.total;
-      const assignedTaskDifference =
-        assignedTaskCount - lastMonthAssignedTasks.total;
-
-      const thisMonthIncompleteTasks = await databases.listDocuments(
-        DATABASE_ID,
-        TASKS_ID,
-        [
-          Query.equal("projectId", projectId),
-          Query.notEqual("status", TaskStatus.DONE),
-          Query.greaterThanEqual("$createdAt", thisMonthStart.toISOString()),
-          Query.lessThanEqual("$createdAt", thisMonthEnd.toISOString())
-        ]
-      );
-
-      const lastMonthIncompleteTasks = await databases.listDocuments(
-        DATABASE_ID,
-        TASKS_ID,
-        [
-          Query.equal("projectId", projectId),
-          Query.notEqual("status", TaskStatus.DONE),
-          Query.greaterThanEqual("$createdAt", lastMonthStart.toISOString()),
-          Query.lessThanEqual("$createdAt", lastMonthEnd.toISOString())
-        ]
-      );
-
-      const incompleteTaskCount = thisMonthIncompleteTasks.total;
-      const incompleteTaskDifference =
-        incompleteTaskCount - lastMonthIncompleteTasks.total;
+      const assignedTaskDifference = assignedTaskCount - lastMonthAssignedTasks.total;
 
       const thisMonthCompletedTasks = await databases.listDocuments(
         DATABASE_ID,
@@ -355,8 +338,7 @@ const app = new Hono()
       );
 
       const completedTaskCount = thisMonthCompletedTasks.total;
-      const completedTaskDifference =
-        completedTaskCount - lastMonthCompletedTasks.total;
+      const completedTaskDifference = completedTaskCount - lastMonthCompletedTasks.total;
 
       const thisMonthOverdueTasks = await databases.listDocuments(
         DATABASE_ID,
@@ -383,11 +365,83 @@ const app = new Hono()
       );
 
       const overdueTaskCount = thisMonthOverdueTasks.total;
-      const overdueTaskDifference =
-        overdueTaskCount - lastMonthOverdueTasks.total;
+      const overdueTaskDifference = overdueTaskCount - lastMonthOverdueTasks.total;
+
+      const incompleteTaskCount = taskCount - completedTaskCount;
+      const incompleteTaskDifference = (lastMonthTasks.total - lastMonthCompletedTasks.total) - incompleteTaskCount;
+
+      // Task status distribution
+      const statusDistribution = {
+        [TaskStatus.BACKLOG]: 0,
+        [TaskStatus.TODO]: 0,
+        [TaskStatus.IN_PROGRESS]: 0,
+        [TaskStatus.IN_REVIEW]: 0,
+        [TaskStatus.DONE]: 0,
+      };
+
+      allTasks.documents.forEach((task: any) => {
+        statusDistribution[task.status as TaskStatus]++;
+      });
+
+      // Task creation trend over last 6 months
+      const taskCreationTrend = [];
+      for (let i = 5; i >= 0; i--) {
+        const monthStart = startOfMonth(subMonths(now, i));
+        const monthEnd = endOfMonth(subMonths(now, i));
+        
+        const monthTasks = await databases.listDocuments(
+          DATABASE_ID,
+          TASKS_ID,
+          [
+            Query.equal("projectId", projectId),
+            Query.greaterThanEqual("$createdAt", monthStart.toISOString()),
+            Query.lessThanEqual("$createdAt", monthEnd.toISOString())
+          ]
+        );
+
+        taskCreationTrend.push({
+          month: monthStart.toISOString().split('T')[0].slice(0, 7), // YYYY-MM format
+          tasks: monthTasks.total,
+          completed: monthTasks.documents.filter((task: any) => task.status === TaskStatus.DONE).length
+        });
+      }
+
+      // Assignee task distribution
+      const assigneeDistribution: { [key: string]: number } = {};
+      allTasks.documents.forEach((task: any) => {
+        if (task.assigneeId) {
+          assigneeDistribution[task.assigneeId] = (assigneeDistribution[task.assigneeId] || 0) + 1;
+        }
+      });
+
+      // Task completion rate
+      const totalTasks = allTasks.total;
+      const totalCompleted = statusDistribution[TaskStatus.DONE];
+      const completionRate = totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 0;
+
+      // Average days to complete tasks
+      const completedTasks = allTasks.documents.filter((task: any) => task.status === TaskStatus.DONE);
+      let averageDaysToComplete = 0;
+      if (completedTasks.length > 0) {
+        const totalDays = completedTasks.reduce((sum: number, task: any) => {
+          const created = new Date(task.$createdAt);
+          const updated = new Date(task.$updatedAt);
+          const days = Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+          return sum + days;
+        }, 0);
+        averageDaysToComplete = Math.round(totalDays / completedTasks.length);
+      }
+
+      // Task priority distribution (if priority field exists)
+      const priorityDistribution = {
+        high: allTasks.documents.filter((task: any) => task.priority === 'high').length,
+        medium: allTasks.documents.filter((task: any) => task.priority === 'medium').length,
+        low: allTasks.documents.filter((task: any) => task.priority === 'low').length,
+      };
 
       return c.json({
         data: {
+          // Basic metrics
           taskCount,
           taskDifference,
           assignedTaskCount,
@@ -398,6 +452,15 @@ const app = new Hono()
           incompleteTaskDifference,
           overdueTaskCount,
           overdueTaskDifference,
+          
+          // Enhanced analytics
+          totalTasks,
+          completionRate,
+          averageDaysToComplete,
+          statusDistribution,
+          taskCreationTrend,
+          assigneeDistribution,
+          priorityDistribution,
         },
       });
     }
