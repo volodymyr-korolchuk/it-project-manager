@@ -7,13 +7,14 @@ import { usePathname } from "next/navigation";
 
 import { useProjectId } from "@/features/projects/hooks/use-project-id";
 import { useGetProject } from "@/features/projects/api/use-get-project";
+import { useGetProjectAnalytics } from "@/features/projects/api/use-get-project-analytics";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
-import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
 
 import { Button } from "@/components/ui/button";
 import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
+import { ProjectAnalyticsDashboard } from "@/components/project-analytics-dashboard";
 import { cn } from "@/lib/utils";
 
 const projectTabs = [
@@ -37,14 +38,17 @@ const projectTabs = [
   },
 ];
 
-export const ProjectIdClient = () => {
+export const AnalyticsClient = () => {
   const projectId = useProjectId();
   const workspaceId = useWorkspaceId();
   const pathname = usePathname();
   
   const { data: project, isLoading: isLoadingProject } = useGetProject({ projectId });
+  const { data: analytics, isLoading: isLoadingAnalytics } = useGetProjectAnalytics({ projectId });
 
-  if (isLoadingProject) {
+  const isLoading = isLoadingProject || isLoadingAnalytics;
+
+  if (isLoading) {
     return <PageLoader />
   }
 
@@ -64,7 +68,7 @@ export const ProjectIdClient = () => {
           />
           <div>
             <h1 className="text-2xl font-bold">{project.name}</h1>
-            <p className="text-sm text-muted-foreground">Project Overview</p>
+            <p className="text-sm text-muted-foreground">Project Analytics</p>
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
@@ -102,13 +106,16 @@ export const ProjectIdClient = () => {
         </div>
       </div>
 
-      {/* Overview Content */}
+      {/* Analytics Content */}
       <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Project Tasks</h2>
-          <TaskViewSwitcher hideProjectFilter />
-        </div>
+        {analytics ? (
+          <ProjectAnalyticsDashboard data={analytics} />
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No analytics data available</p>
+          </div>
+        )}
       </div>
     </div>
   );
-};
+}; 

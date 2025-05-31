@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SettingsIcon, UsersIcon } from "lucide-react";
-import { GoCheckCircle, GoCheckCircleFill, GoHome, GoHomeFill } from "react-icons/go";
+import { 
+  HiHome, 
+  HiOutlineHome,
+  HiClipboardList,
+  HiOutlineClipboardList,
+  HiCog,
+  HiOutlineCog,
+  HiUsers,
+  HiOutlineUsers
+} from "react-icons/hi";
 
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
@@ -13,26 +21,26 @@ const routes = [
   {
     label: "Home",
     href: "",
-    icon: GoHome,
-    activeIcon: GoHomeFill,
+    icon: HiOutlineHome,
+    activeIcon: HiHome,
   },
   {
     label: "My Tasks",
     href: "/tasks",
-    icon: GoCheckCircle,
-    activeIcon: GoCheckCircleFill,
+    icon: HiOutlineClipboardList,
+    activeIcon: HiClipboardList,
   },
   {
     label: "Settings",
     href: "/settings",
-    icon: SettingsIcon,
-    activeIcon: SettingsIcon,
+    icon: HiOutlineCog,
+    activeIcon: HiCog,
   },
   {
     label: "Members",
     href: "/members",
-    icon: UsersIcon,
-    activeIcon: UsersIcon,
+    icon: HiOutlineUsers,
+    activeIcon: HiUsers,
   },
 ];
 
@@ -51,7 +59,7 @@ export const Navigation = () => {
           <Link key={item.href} href={fullHref}>
             <div className={cn(
               "flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-muted-foreground",
-              isActive && "bg-card shadow-sm hover:opacity-100 text-primary"
+              isActive && "bg-accent shadow-sm hover:opacity-100 text-primary"
             )}>
               <Icon className="size-5 text-muted-foreground" />
               {item.label}

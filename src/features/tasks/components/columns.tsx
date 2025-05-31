@@ -23,7 +23,7 @@ export const columns: ColumnDef<Task>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-semibold text-foreground justify-start"
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
         >
           Task Name
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -33,7 +33,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const name = row.original.name;
 
-      return <p className="line-clamp-1 font-medium text-foreground">{name}</p>
+      return <p className="line-clamp-1 font-semibold text-foreground">{name}</p>
     }
   },
   {
@@ -43,7 +43,7 @@ export const columns: ColumnDef<Task>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-semibold text-foreground justify-start"
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
         >
           Project
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Task>[] = [
             name={project.name}
             image={project.imageUrl}
           />
-          <p className="line-clamp-1 font-medium text-foreground">{project.name}</p>
+          <p className="line-clamp-1 text-foreground">{project.name}</p>
         </div>
       )
     }
@@ -72,7 +72,7 @@ export const columns: ColumnDef<Task>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-semibold text-foreground justify-start"
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
         >
           Assignee
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -89,7 +89,7 @@ export const columns: ColumnDef<Task>[] = [
             fallbackClassName="text-xs"
             name={assignee.name}
           />
-          <p className="line-clamp-1 font-medium text-foreground">{assignee.name}</p>
+          <p className="line-clamp-1 text-foreground">{assignee.name}</p>
         </div>
       )
     }
@@ -101,7 +101,7 @@ export const columns: ColumnDef<Task>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-semibold text-foreground justify-start"
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
         >
           Due Date
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -111,7 +111,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const dueDate = row.original.dueDate;
 
-      return <TaskDate value={dueDate} className="text-sm font-medium text-foreground" />
+      return <TaskDate value={dueDate} className="text-sm text-foreground" />
     }
   },
   {
@@ -121,7 +121,7 @@ export const columns: ColumnDef<Task>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-semibold text-foreground justify-start"
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
         >
           Status
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -131,7 +131,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      return <Badge variant={status} className="font-medium">{snakeCaseToTitleCase(status)}</Badge>
+      return <Badge variant={status}>{snakeCaseToTitleCase(status)}</Badge>
     }
   },
   {

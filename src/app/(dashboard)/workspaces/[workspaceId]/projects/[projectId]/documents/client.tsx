@@ -1,15 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, Plus } from "lucide-react";
 import { HiViewGrid, HiDocumentText, HiChartBar } from "react-icons/hi";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import { useProjectId } from "@/features/projects/hooks/use-project-id";
 import { useGetProject } from "@/features/projects/api/use-get-project";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useGetDocuments } from "@/features/documents/api/use-get-documents";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
-import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
+import { DocumentList } from "@/features/documents/components/document-list";
+import { CreateDocumentModal } from "@/features/documents/components/create-document-modal";
 
 import { Button } from "@/components/ui/button";
 import { PageError } from "@/components/page-error";
@@ -37,14 +40,18 @@ const projectTabs = [
   },
 ];
 
-export const ProjectIdClient = () => {
+export const DocumentsClient = () => {
+  const [createDocumentOpen, setCreateDocumentOpen] = useState(false);
   const projectId = useProjectId();
   const workspaceId = useWorkspaceId();
   const pathname = usePathname();
   
   const { data: project, isLoading: isLoadingProject } = useGetProject({ projectId });
+  const { data: documents, isLoading: isLoadingDocuments } = useGetDocuments({ projectId });
 
-  if (isLoadingProject) {
+  const isLoading = isLoadingProject || isLoadingDocuments;
+
+  if (isLoading) {
     return <PageLoader />
   }
 
@@ -64,7 +71,7 @@ export const ProjectIdClient = () => {
           />
           <div>
             <h1 className="text-2xl font-bold">{project.name}</h1>
-            <p className="text-sm text-muted-foreground">Project Overview</p>
+            <p className="text-sm text-muted-foreground">Project Documentation</p>
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
@@ -102,13 +109,33 @@ export const ProjectIdClient = () => {
         </div>
       </div>
 
-      {/* Overview Content */}
+      {/* Documents Content */}
       <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Project Tasks</h2>
-          <TaskViewSwitcher hideProjectFilter />
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Project Documentation</h2>
+            <p className="text-sm text-muted-foreground">
+              Create and manage project documentation
+            </p>
+          </div>
+          <Button onClick={() => setCreateDocumentOpen(true)}>
+            <Plus className="size-4 mr-2" />
+            New Document
+          </Button>
         </div>
+
+        <DocumentList
+          documents={documents?.documents || []}
+          workspaceId={project.workspaceId}
+          projectId={project.$id}
+        />
       </div>
+
+      <CreateDocumentModal
+        isOpen={createDocumentOpen}
+        onOpenChange={setCreateDocumentOpen}
+        projectId={project.$id}
+      />
     </div>
   );
-};
+}; 

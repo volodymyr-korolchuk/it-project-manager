@@ -6,8 +6,9 @@ import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 import { TaskStatus } from "@/features/tasks/types";
 import { getMember } from "@/features/members/utils";
+import { createAdminClient } from "@/lib/appwrite";
 
-import { DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID, TASKS_ID } from "@/config";
+import { DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID, TASKS_ID, MEMBERS_ID } from "@/config";
 import { sessionMiddleware } from "@/lib/session-middleware";
 
 import { createProjectSchema, updateProjectSchema } from "../schemas";
@@ -408,11 +409,34 @@ const app = new Hono()
 
       // Assignee task distribution
       const assigneeDistribution: { [key: string]: number } = {};
+      const assigneeIds = new Set<string>();
+      
       allTasks.documents.forEach((task: any) => {
         if (task.assigneeId) {
           assigneeDistribution[task.assigneeId] = (assigneeDistribution[task.assigneeId] || 0) + 1;
+          assigneeIds.add(task.assigneeId);
         }
       });
+
+      // Fetch assignee names
+      const assigneeNames: { [key: string]: string } = {};
+      if (assigneeIds.size > 0) {
+        const { users } = await createAdminClient();
+        const members = await databases.listDocuments(
+          DATABASE_ID,
+          MEMBERS_ID,
+          [Query.contains("$id", Array.from(assigneeIds))]
+        );
+
+        for (const member of members.documents) {
+          try {
+            const user = await users.get(member.userId);
+            assigneeNames[member.$id] = user.name || user.email;
+          } catch (error) {
+            assigneeNames[member.$id] = `User ${member.$id.slice(0, 8)}`;
+          }
+        }
+      }
 
       // Task completion rate
       const totalTasks = allTasks.total;
@@ -460,6 +484,7 @@ const app = new Hono()
           statusDistribution,
           taskCreationTrend,
           assigneeDistribution,
+          assigneeNames,
           priorityDistribution,
         },
       });

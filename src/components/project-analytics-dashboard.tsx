@@ -303,6 +303,7 @@ export const ProjectAnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType
             <CardContent>
               <AssigneeWorkloadChart 
                 data={data.assigneeDistribution}
+                assigneeNames={data.assigneeNames}
               />
             </CardContent>
           </Card>

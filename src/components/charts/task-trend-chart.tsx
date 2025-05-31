@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,7 +34,43 @@ interface TaskTrendChartProps {
   }>;
 }
 
+// Utility to get computed CSS color values
+const getComputedCSSColor = (cssVar: string): string => {
+  if (typeof window === 'undefined') return '#ffffff';
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+  const hslValue = computedStyle.getPropertyValue(cssVar).trim();
+  
+  if (hslValue) {
+    return `hsl(${hslValue})`;
+  }
+  
+  // Fallback colors
+  if (cssVar.includes('foreground')) return '#ffffff';
+  if (cssVar.includes('background')) return '#000000';
+  if (cssVar.includes('border')) return '#334155';
+  return '#ffffff';
+};
+
 export const TaskTrendChart = ({ data }: TaskTrendChartProps) => {
+  const [colors, setColors] = useState({
+    foreground: '#ffffff',
+    background: '#000000',
+    border: '#334155',
+    popover: '#000000',
+    popoverForeground: '#ffffff',
+  });
+
+  useEffect(() => {
+    setColors({
+      foreground: getComputedCSSColor('--foreground'),
+      background: getComputedCSSColor('--background'),
+      border: getComputedCSSColor('--border'),
+      popover: getComputedCSSColor('--popover'),
+      popoverForeground: getComputedCSSColor('--popover-foreground'),
+    });
+  }, []);
+
   const chartData = {
     labels: data.map(item => {
       const date = new Date(item.month + '-01');
@@ -50,12 +86,12 @@ export const TaskTrendChart = ({ data }: TaskTrendChartProps) => {
         fill: true,
         tension: 0.4,
         pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-        pointBorderColor: '#ffffff',
+        pointBorderColor: colors.background,
         pointBorderWidth: 2,
         pointRadius: 6,
         pointHoverRadius: 8,
         pointHoverBackgroundColor: 'rgba(59, 130, 246, 1)',
-        pointHoverBorderColor: '#ffffff',
+        pointHoverBorderColor: colors.background,
         pointHoverBorderWidth: 3,
       },
       {
@@ -67,12 +103,12 @@ export const TaskTrendChart = ({ data }: TaskTrendChartProps) => {
         fill: true,
         tension: 0.4,
         pointBackgroundColor: 'rgba(34, 197, 94, 1)',
-        pointBorderColor: '#ffffff',
+        pointBorderColor: colors.background,
         pointBorderWidth: 2,
         pointRadius: 6,
         pointHoverRadius: 8,
         pointHoverBackgroundColor: 'rgba(34, 197, 94, 1)',
-        pointHoverBorderColor: '#ffffff',
+        pointHoverBorderColor: colors.background,
         pointHoverBorderWidth: 3,
       },
     ],
@@ -87,23 +123,33 @@ export const TaskTrendChart = ({ data }: TaskTrendChartProps) => {
         labels: {
           padding: 20,
           font: {
-            size: 12,
-            weight: 500,
+            size: 13,
+            weight: 600,
           },
-          color: 'hsl(var(--foreground))',
+          color: colors.foreground,
           usePointStyle: true,
           pointStyle: 'circle',
+          boxWidth: 8,
+          boxHeight: 8,
         },
       },
       tooltip: {
-        backgroundColor: 'hsl(var(--popover))',
-        titleColor: 'hsl(var(--popover-foreground))',
-        bodyColor: 'hsl(var(--popover-foreground))',
-        borderColor: 'hsl(var(--border))',
+        backgroundColor: colors.popover,
+        titleColor: colors.popoverForeground,
+        bodyColor: colors.popoverForeground,
+        borderColor: colors.border,
         borderWidth: 1,
         cornerRadius: 8,
         mode: 'index',
         intersect: false,
+        titleFont: {
+          size: 14,
+          weight: 600,
+        },
+        bodyFont: {
+          size: 13,
+          weight: 500,
+        },
         callbacks: {
           title: function(context) {
             return context[0].label;
@@ -119,34 +165,36 @@ export const TaskTrendChart = ({ data }: TaskTrendChartProps) => {
     scales: {
       x: {
         grid: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
           lineWidth: 1,
         },
         ticks: {
-          color: 'hsl(var(--muted-foreground))',
+          color: colors.foreground,
           font: {
-            size: 11,
+            size: 12,
+            weight: 500,
           },
         },
         border: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
         },
       },
       y: {
         beginAtZero: true,
         grid: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
           lineWidth: 1,
         },
         ticks: {
-          color: 'hsl(var(--muted-foreground))',
+          color: colors.foreground,
           font: {
-            size: 11,
+            size: 12,
+            weight: 500,
           },
           stepSize: 1,
         },
         border: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
         },
       },
     },

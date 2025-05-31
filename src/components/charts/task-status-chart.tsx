@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -22,7 +22,44 @@ interface TaskStatusChartProps {
   };
 }
 
+// Utility to get computed CSS color values
+const getComputedCSSColor = (cssVar: string): string => {
+  if (typeof window === 'undefined') return '#ffffff';
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+  const hslValue = computedStyle.getPropertyValue(cssVar).trim();
+  
+  if (hslValue) {
+    // Convert HSL to a format Chart.js understands
+    return `hsl(${hslValue})`;
+  }
+  
+  // Fallback colors
+  if (cssVar.includes('foreground')) return '#ffffff';
+  if (cssVar.includes('background')) return '#000000';
+  if (cssVar.includes('border')) return '#334155';
+  return '#ffffff';
+};
+
 export const TaskStatusChart = ({ data }: TaskStatusChartProps) => {
+  const [colors, setColors] = useState({
+    foreground: '#ffffff',
+    background: '#000000',
+    border: '#334155',
+    popover: '#000000',
+    popoverForeground: '#ffffff',
+  });
+
+  useEffect(() => {
+    setColors({
+      foreground: getComputedCSSColor('--foreground'),
+      background: getComputedCSSColor('--background'),
+      border: getComputedCSSColor('--border'),
+      popover: getComputedCSSColor('--popover'),
+      popoverForeground: getComputedCSSColor('--popover-foreground'),
+    });
+  }, []);
+
   const chartData = {
     labels: ['Backlog', 'Todo', 'In Progress', 'In Review', 'Done'],
     datasets: [
@@ -73,16 +110,27 @@ export const TaskStatusChart = ({ data }: TaskStatusChartProps) => {
             size: 12,
             weight: 500,
           },
-          color: 'hsl(var(--foreground))',
+          color: colors.foreground,
+          boxWidth: 12,
+          boxHeight: 12,
+          usePointStyle: true,
         },
       },
       tooltip: {
-        backgroundColor: 'hsl(var(--popover))',
-        titleColor: 'hsl(var(--popover-foreground))',
-        bodyColor: 'hsl(var(--popover-foreground))',
-        borderColor: 'hsl(var(--border))',
+        backgroundColor: colors.popover,
+        titleColor: colors.popoverForeground,
+        bodyColor: colors.popoverForeground,
+        borderColor: colors.border,
         borderWidth: 1,
         cornerRadius: 8,
+        titleFont: {
+          size: 14,
+          weight: 600,
+        },
+        bodyFont: {
+          size: 13,
+          weight: 500,
+        },
         callbacks: {
           label: function(context) {
             const label = context.label || '';
@@ -107,9 +155,9 @@ export const TaskStatusChart = ({ data }: TaskStatusChartProps) => {
     <div className="relative h-80 w-full">
       <Doughnut data={chartData} options={options} />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="text-center">
+        <div className="text-center bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/50">
           <div className="text-2xl font-bold text-foreground">{total}</div>
-          <div className="text-sm text-muted-foreground">Total Tasks</div>
+          <div className="text-sm font-medium text-muted-foreground">Total Tasks</div>
         </div>
       </div>
     </div>

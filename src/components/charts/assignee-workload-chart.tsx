@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,10 +27,46 @@ interface AssigneeWorkloadChartProps {
   assigneeNames?: { [assigneeId: string]: string };
 }
 
+// Utility to get computed CSS color values
+const getComputedCSSColor = (cssVar: string): string => {
+  if (typeof window === 'undefined') return '#ffffff';
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+  const hslValue = computedStyle.getPropertyValue(cssVar).trim();
+  
+  if (hslValue) {
+    return `hsl(${hslValue})`;
+  }
+  
+  // Fallback colors
+  if (cssVar.includes('foreground')) return '#ffffff';
+  if (cssVar.includes('background')) return '#000000';
+  if (cssVar.includes('border')) return '#334155';
+  return '#ffffff';
+};
+
 export const AssigneeWorkloadChart = ({ 
   data, 
   assigneeNames = {} 
 }: AssigneeWorkloadChartProps) => {
+  const [colors, setColors] = useState({
+    foreground: '#ffffff',
+    background: '#000000',
+    border: '#334155',
+    popover: '#000000',
+    popoverForeground: '#ffffff',
+  });
+
+  useEffect(() => {
+    setColors({
+      foreground: getComputedCSSColor('--foreground'),
+      background: getComputedCSSColor('--background'),
+      border: getComputedCSSColor('--border'),
+      popover: getComputedCSSColor('--popover'),
+      popoverForeground: getComputedCSSColor('--popover-foreground'),
+    });
+  }, []);
+
   const sortedData = Object.entries(data)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 10); // Show top 10 assignees
@@ -96,12 +132,20 @@ export const AssigneeWorkloadChart = ({
         display: false,
       },
       tooltip: {
-        backgroundColor: 'hsl(var(--popover))',
-        titleColor: 'hsl(var(--popover-foreground))',
-        bodyColor: 'hsl(var(--popover-foreground))',
-        borderColor: 'hsl(var(--border))',
+        backgroundColor: colors.popover,
+        titleColor: colors.popoverForeground,
+        bodyColor: colors.popoverForeground,
+        borderColor: colors.border,
         borderWidth: 1,
         cornerRadius: 8,
+        titleFont: {
+          size: 14,
+          weight: 600,
+        },
+        bodyFont: {
+          size: 13,
+          weight: 500,
+        },
         callbacks: {
           title: function(context) {
             return context[0].label;
@@ -117,18 +161,19 @@ export const AssigneeWorkloadChart = ({
       x: {
         beginAtZero: true,
         grid: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
           lineWidth: 1,
         },
         ticks: {
-          color: 'hsl(var(--muted-foreground))',
+          color: colors.foreground,
           font: {
-            size: 11,
+            size: 12,
+            weight: 500,
           },
           stepSize: 1,
         },
         border: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
         },
       },
       y: {
@@ -136,13 +181,14 @@ export const AssigneeWorkloadChart = ({
           display: false,
         },
         ticks: {
-          color: 'hsl(var(--muted-foreground))',
+          color: colors.foreground,
           font: {
-            size: 11,
+            size: 12,
+            weight: 500,
           },
         },
         border: {
-          color: 'hsl(var(--border))',
+          color: colors.border,
         },
       },
     },
@@ -161,7 +207,7 @@ export const AssigneeWorkloadChart = ({
     return (
       <div className="h-64 w-full flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg font-medium text-muted-foreground">No assigned tasks</div>
+          <div className="text-lg font-semibold text-foreground">No assigned tasks</div>
           <div className="text-sm text-muted-foreground">Tasks will appear here when assigned to team members</div>
         </div>
       </div>
