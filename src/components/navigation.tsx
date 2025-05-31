@@ -10,7 +10,9 @@ import {
   HiCog,
   HiOutlineCog,
   HiUsers,
-  HiOutlineUsers
+  HiOutlineUsers,
+  HiChat,
+  HiOutlineChat
 } from "react-icons/hi";
 
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
@@ -29,6 +31,12 @@ const routes = [
     href: "/tasks",
     icon: HiOutlineClipboardList,
     activeIcon: HiClipboardList,
+  },
+  {
+    label: "Chat",
+    href: "/chat",
+    icon: HiOutlineChat,
+    activeIcon: HiChat,
   },
   {
     label: "Settings",

@@ -37,9 +37,6 @@ export const Sidebar = () => {
       <div className="relative z-10">
         <Link href="/">
           <div className="flex items-center gap-2">
-            <div className="size-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
-              <span className="text-white text-lg font-bold">N</span>
-            </div>
             <span className="text-lg font-semibold">Nexora</span>
           </div>
         </Link>

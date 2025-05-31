@@ -151,3 +151,61 @@ body {
   0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.03; }
   50% { transform: translate(-25px, 35px) scale(1.05); opacity: 0.05; }
 }
+
+/* Custom Scrollbar Styles for Chat Sidebar */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border) / 0.3) transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--border) / 0.3);
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--border) / 0.5);
+}
+
+.chat-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Enhanced scrollbar for better visibility */
+.chat-scrollbar-enhanced {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.2) hsl(var(--muted) / 0.1);
+}
+
+.chat-scrollbar-enhanced::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-scrollbar-enhanced::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.1);
+  border-radius: 12px;
+  margin: 4px;
+}
+
+.chat-scrollbar-enhanced::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.3));
+  border-radius: 12px;
+  border: 1px solid hsl(var(--border) / 0.2);
+  transition: all 0.2s ease;
+}
+
+.chat-scrollbar-enhanced::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.4));
+  border-color: hsl(var(--border) / 0.3);
+  transform: scaleX(1.1);
+}
