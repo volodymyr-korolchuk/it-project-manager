@@ -32,6 +32,7 @@ import {
 import { Task, TaskStatus } from "../types";
 import { createTaskSchema } from "../schemas";
 import { useUpdateTask } from "../api/use-update-task";
+import { TimeTrackingButton } from "./time-tracking-button";
 
 interface EditTaskFormProps {
   onCancel?: () => void;
@@ -70,7 +71,10 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <CardContent className="p-7">
+      <CardContent className="px-7 py-5">
+        <div className="flex justify-end mb-4">
+          <TimeTrackingButton task={initialValues} />
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-y-4">

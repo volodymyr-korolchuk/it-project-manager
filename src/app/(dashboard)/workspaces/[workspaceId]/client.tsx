@@ -14,6 +14,7 @@ import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
+import { TimeTrackingButton } from "@/features/tasks/components/time-tracking-button";
 
 import { Button } from "@/components/ui/button";
 import { PageError } from "@/components/page-error";
@@ -202,6 +203,11 @@ export const TaskList = ({ data, total }: TaskListProps) => {
                                 new Date(task.dueDate) < new Date() ? "bg-red-400/60" : "bg-blue-400/60"
                               }`} />
                             </div>
+                          </div>
+                          
+                          {/* Time tracking button */}
+                          <div className="mt-2">
+                            <TimeTrackingButton task={task} />
                           </div>
                         </div>
                       </div>

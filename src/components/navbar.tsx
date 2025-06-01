@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { UserButton } from "@/features/auth/components/user-button";
+import { TimeTrackingIndicator } from "@/features/tasks/components/time-tracking-indicator";
 
 import { MobileSidebar } from "./mobile-sidebar";
 
@@ -39,8 +40,11 @@ export const Navbar = () => {
           {/* {description} */}
         </p>
       </div>
-      <MobileSidebar />
-      <UserButton />
+      <div className="flex items-center gap-x-4">
+        <TimeTrackingIndicator />
+        <MobileSidebar />
+        <UserButton />
+      </div>
     </nav>
   );
 };

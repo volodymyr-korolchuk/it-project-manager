@@ -7,6 +7,7 @@ import { DottedSeparator } from "@/components/dotted-separator";
 
 import { TaskDate } from "./task-date";
 import { TaskActions } from "./task-actions";
+import { TimeTrackingButton } from "./time-tracking-button";
 
 import { Task } from "../types";
 
@@ -28,14 +29,17 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
       
       <DottedSeparator className="opacity-50" />
       
-      <div className="flex items-center gap-x-2">
-        <MemberAvatar
-          name={task.assignee.name}
-          fallbackClassName="text-[10px]"
-          className="size-5"
-        />
-        <div className="size-1 rounded-full bg-muted-foreground/30" />
-        <TaskDate value={task.dueDate} className="text-xs text-muted-foreground" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-2">
+          <MemberAvatar
+            name={task.assignee.name}
+            fallbackClassName="text-[10px]"
+            className="size-5"
+          />
+          <div className="size-1 rounded-full bg-muted-foreground/30" />
+          <TaskDate value={task.dueDate} className="text-xs text-muted-foreground" />
+        </div>
+        <TimeTrackingButton task={task} />
       </div>
       
       <div className="flex items-center gap-x-2">

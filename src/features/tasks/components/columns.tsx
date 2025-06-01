@@ -12,6 +12,7 @@ import { snakeCaseToTitleCase } from "@/lib/utils";
 
 import { TaskDate } from "./task-date";
 import { TaskActions } from "./task-actions";
+import { TimeTrackingButton } from "./time-tracking-button";
 
 import { Task } from "../types";
 
@@ -132,6 +133,14 @@ export const columns: ColumnDef<Task>[] = [
       const status = row.original.status;
 
       return <Badge variant={status}>{snakeCaseToTitleCase(status)}</Badge>
+    }
+  },
+  {
+    id: "timeTracking",
+    header: () => <span className="text-foreground font-medium">Time</span>,
+    cell: ({ row }) => {
+      const task = row.original;
+      return <TimeTrackingButton task={task} />
     }
   },
   {
