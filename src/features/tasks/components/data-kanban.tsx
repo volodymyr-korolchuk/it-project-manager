@@ -5,6 +5,7 @@ import {
   Draggable,
   type DropResult,
 } from "@hello-pangea/dnd";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumnHeader } from "./kanban-column-header";
@@ -154,47 +155,52 @@ export const DataKanban = ({
   }, [onChange]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex overflow-x-auto">
-        {boards.map((board) => {
-          return (
-            <div key={board} className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]">
-              <KanbanColumnHeader
-                board={board}
-                taskCount={tasks[board].length}
-              />
-              <Droppable droppableId={board}>
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="min-h-[400px] py-1.5"
-                  >
-                    {tasks[board].map((task, index) => (
-                      <Draggable
-                        key={task.$id}
-                        draggableId={task.$id}
-                        index={index}
+    <div className="border-standard rounded-lg p-4 overflow-hidden">
+      <ScrollArea className="w-full">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
+            {boards.map((board) => (
+              <div key={board} className="border-subtle rounded-lg overflow-hidden bg-muted/10">
+                <KanbanColumnHeader
+                  board={board}
+                  taskCount={tasks[board].length}
+                />
+                <div className="p-2">
+                  <Droppable droppableId={board}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className="min-h-[200px]"
                       >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
+                        {tasks[board].map((task, index) => (
+                          <Draggable
+                            key={task.$id}
+                            draggableId={task.$id}
+                            index={index}
                           >
-                            <KanbanCard task={task} />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-          )
-        })}
-      </div>
-    </DragDropContext>
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <KanbanCard task={task} />
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DragDropContext>
+        <ScrollBar orientation="horizontal" className="mt-2" />
+      </ScrollArea>
+    </div>
   );
 };

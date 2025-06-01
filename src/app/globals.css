@@ -10,6 +10,27 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Standardized border utilities for consistency */
+  .border-standard {
+    @apply border border-border;
+  }
+  
+  .border-subtle {
+    @apply border border-border/40;
+  }
+  
+  .border-hover {
+    @apply border border-border/40 hover:border-border/70 transition-colors;
+  }
+  
+  .border-active {
+    @apply border border-border/70;
+  }
+  
+  .border-focus {
+    @apply border border-primary/30 ring-1 ring-primary/20;
+  }
 }
 
 @layer base {
@@ -21,24 +42,24 @@ body {
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 160 84% 30%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 152 76% 34%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 160 84% 30%;
+    --chart-1: 160 84% 30%;
+    --chart-2: 152 76% 34%;
+    --chart-3: 282 45% 47%;
+    --chart-4: 170 70% 40%;
+    --chart-5: 272 70% 60%;
     --radius: 0.5rem;
 
     /* Standardized dark theme - ONLY 2 shades: 3% (primary) and 8% (secondary) */
@@ -48,24 +69,24 @@ body {
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 3%;
+    --primary: 160 84% 30%;
+    --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 8%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 8%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 0 0% 8%;
+    --muted-foreground: 0 0% 75%;
+    --accent: 152 76% 34%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 8%;
-    --input: 0 0% 8%;
-    --ring: 0 0% 25%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 160 84% 30%;
+    --chart-1: 160 84% 30%;
+    --chart-2: 282 45% 47%;
+    --chart-3: 170 70% 40%;
+    --chart-4: 272 70% 60%;
+    --chart-5: 190 70% 45%;
   }
 
   /* Light theme override (if someone wants to switch back) */
@@ -76,24 +97,24 @@ body {
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 160 84% 30%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 152 76% 34%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 160 84% 30%;
+    --chart-1: 160 84% 30%;
+    --chart-2: 282 45% 47%;
+    --chart-3: 170 70% 40%;
+    --chart-4: 272 70% 60%;
+    --chart-5: 190 70% 45%;
   }
 }
 
@@ -152,6 +173,17 @@ body {
   50% { transform: translate(-25px, 35px) scale(1.05); opacity: 0.05; }
 }
 
+/* Very subtle page background animation */
+@keyframes float-page-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.02; }
+  50% { transform: translate(15px, -15px) scale(1.05); opacity: 0.03; }
+}
+
+@keyframes float-page-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.01; }
+  50% { transform: translate(-10px, 10px) scale(1.03); opacity: 0.02; }
+}
+
 /* Custom Scrollbar Styles for Chat Sidebar */
 .chat-scrollbar {
   scrollbar-width: thin;
@@ -208,4 +240,42 @@ body {
   background: linear-gradient(180deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.4));
   border-color: hsl(var(--border) / 0.3);
   transform: scaleX(1.1);
+}
+
+/* Page background gradients */
+.page-gradient {
+  position: relative;
+}
+
+/* Remove gradient blobs and their animations */
+
+/* Clean scrollbar styles */
+.clean-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border) / 0.6) transparent;
+}
+
+.clean-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.clean-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+.clean-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--border) / 0.6);
+  border-radius: 20px;
+  transition: background-color 0.2s ease;
+}
+
+.clean-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--border) / 0.8);
+}
+
+.clean-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
 }

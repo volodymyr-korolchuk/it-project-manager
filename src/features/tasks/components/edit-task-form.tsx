@@ -39,20 +39,27 @@ interface EditTaskFormProps {
   projectOptions: { id: string, name: string, imageUrl: string }[];
   memberOptions: { id: string, name: string }[];
   initialValues: Task;
+}
+
+// Define a type for the form that includes Date objects for dates
+type EditTaskFormValues = Omit<z.infer<typeof createTaskSchema>, 'startDate' | 'dueDate'> & {
+  startDate?: Date;
+  dueDate: Date;
 };
 
 export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialValues }: EditTaskFormProps) => {
   const { mutate, isPending } = useUpdateTask();
 
-  const form = useForm<z.infer<typeof createTaskSchema>>({
+  const form = useForm<EditTaskFormValues>({
     resolver: zodResolver(createTaskSchema.omit({ workspaceId: true, description: true, })),
     defaultValues: {
       ...initialValues,
+      startDate: initialValues.startDate ? new Date(initialValues.startDate) : undefined,
       dueDate: initialValues.dueDate ? new Date(initialValues.dueDate) : undefined,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+  const onSubmit = (values: EditTaskFormValues) => {
     mutate({ json: values, param: { taskId: initialValues.$id } }, {
       onSuccess: () => {
         form.reset();
@@ -71,7 +78,8 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <CardContent className="px-7 py-5">
+      
+      <CardContent className="px-7 py-4 space-y-4">
         <div className="flex justify-end mb-4">
           <TimeTrackingButton task={initialValues} />
         </div>
@@ -98,6 +106,21 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
               />
               <FormField
                 control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Start Date
+                    </FormLabel>
+                    <FormControl>
+                      <DatePicker {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem>
@@ -108,6 +131,45 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
                       <DatePicker {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Project
+                    </FormLabel>
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
+                        {projectOptions.map((option) => (
+                          <SelectItem
+                            key={option.id}
+                            value={option.id}
+                          >
+                            <div className="flex items-center gap-x-2">
+                              <ProjectAvatar
+                                name={option.name}
+                                image={option.imageUrl}
+                                className="h-7 w-7"
+                              />
+                              <span>{option.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormItem>
                 )}
               />
@@ -130,14 +192,17 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
                       </FormControl>
                       <FormMessage />
                       <SelectContent>
-                        {memberOptions.map((member) => (
-                          <SelectItem key={member.id} value={member.id}>
+                        {memberOptions.map((option) => (
+                          <SelectItem
+                            key={option.id}
+                            value={option.id}
+                          >
                             <div className="flex items-center gap-x-2">
                               <MemberAvatar
-                                className="size-6"
-                                name={member.name}
+                                name={option.name}
+                                className="h-7 w-7"
                               />
-                              {member.name}
+                              <span>{option.name}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -181,62 +246,25 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="projectId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Project
-                    </FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <FormMessage />
-                      <SelectContent>
-                        {projectOptions.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
-                            <div className="flex items-center gap-x-2">
-                              <ProjectAvatar
-                                className="size-6"
-                                name={project.name}
-                                image={project.imageUrl}
-                              />
-                              {project.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DottedSeparator className="py-7" />
-            <div className="flex items-center justify-between">
-              <Button
-                type="button"
-                size="lg"
-                variant="secondary"
-                onClick={onCancel}
-                disabled={isPending}
-                className={cn(!onCancel && "invisible")}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={isPending}
-                type="submit"
-                size="lg"
-              >
-                Save Changes
-              </Button>
+              <div className="flex items-center justify-between">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="secondary"
+                  onClick={onCancel}
+                  disabled={isPending}
+                  className={cn(!onCancel && "invisible")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={isPending}
+                  type="submit"
+                  size="lg"
+                >
+                  Update Task
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

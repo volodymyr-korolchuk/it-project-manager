@@ -96,6 +96,26 @@ export const columns: ColumnDef<Task>[] = [
     }
   },
   {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 hover:bg-transparent focus:outline-none focus:ring-0 font-medium text-foreground justify-start"
+        >
+          Start Date
+          <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const createdAt = row.original.$createdAt;
+
+      return <TaskDate value={createdAt} className="text-sm text-foreground" />
+    }
+  },
+  {
     accessorKey: "dueDate",
     header: ({ column }) => {
       return (

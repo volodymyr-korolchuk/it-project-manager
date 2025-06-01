@@ -38,20 +38,26 @@ interface CreateTaskFormProps {
   onCancel?: () => void;
   projectOptions: { id: string, name: string, imageUrl?: string }[];
   memberOptions: { id: string, name: string }[];
+}
+
+// Define a type for the form that includes Date objects for dates
+type CreateTaskFormValues = Omit<z.infer<typeof createTaskSchema>, 'startDate' | 'dueDate'> & {
+  startDate?: Date;
+  dueDate: Date;
 };
 
 export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: CreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
   const { mutate, isPending } = useCreateTask();
 
-  const form = useForm<z.infer<typeof createTaskSchema>>({
+  const form = useForm<CreateTaskFormValues>({
     resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
     defaultValues: {
       workspaceId,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+  const onSubmit = (values: CreateTaskFormValues) => {
     mutate({ json: { ...values, workspaceId } }, {
       onSuccess: () => {
         form.reset();
@@ -70,7 +76,8 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <CardContent className="p-7">
+      
+      <CardContent className="px-7 py-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-y-4">
@@ -94,6 +101,21 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
               />
               <FormField
                 control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Start Date
+                    </FormLabel>
+                    <FormControl>
+                      <DatePicker {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem>
@@ -104,6 +126,42 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                       <DatePicker {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Project
+                    </FormLabel>
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
+                        {projectOptions.map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex items-center gap-x-2">
+                              <ProjectAvatar
+                                className="size-6"
+                                name={project.name}
+                                image={project.imageUrl}
+                              />
+                              {project.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormItem>
                 )}
               />
@@ -179,37 +237,19 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
               />
               <FormField
                 control={form.control}
-                name="projectId"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Project
+                      Description
                     </FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <FormMessage />
-                      <SelectContent>
-                        {projectOptions.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
-                            <div className="flex items-center gap-x-2">
-                              <ProjectAvatar
-                                className="size-6"
-                                name={project.name}
-                                image={project.imageUrl}
-                              />
-                              {project.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter description"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

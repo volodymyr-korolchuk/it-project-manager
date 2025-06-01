@@ -162,7 +162,7 @@ export const PerformanceMetricsChart = ({
           <div className="text-xs font-medium text-muted-foreground">Completion Rate</div>
         </div>
         <div className="space-y-1">
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{Math.round(efficiency)}%</div>
+          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{Math.round(efficiency)}%</div>
           <div className="text-xs font-medium text-muted-foreground">Efficiency</div>
         </div>
         <div className="space-y-1">

@@ -72,26 +72,26 @@ export const TaskStatusChart = ({ data }: TaskStatusChartProps) => {
           data.DONE,
         ],
         backgroundColor: [
-          'rgba(236, 72, 153, 0.8)', // Pink for Backlog
-          'rgba(239, 68, 68, 0.8)',  // Red for Todo
-          'rgba(251, 191, 36, 0.8)', // Yellow for In Progress
-          'rgba(59, 130, 246, 0.8)', // Blue for In Review
-          'rgba(34, 197, 94, 0.8)',  // Green for Done
+          'rgba(107, 114, 128, 0.8)', // Gray for Backlog
+          'rgba(220, 38, 38, 0.8)',   // Red for Todo
+          'rgba(202, 138, 4, 0.8)',   // Yellow for In Progress
+          'rgba(147, 51, 234, 0.8)',  // Purple for In Review
+          'rgba(16, 185, 129, 0.8)',  // Green for Done
         ],
         borderColor: [
-          'rgba(236, 72, 153, 1)',
-          'rgba(239, 68, 68, 1)',
-          'rgba(251, 191, 36, 1)',
-          'rgba(59, 130, 246, 1)',
-          'rgba(34, 197, 94, 1)',
+          'rgba(107, 114, 128, 1)',
+          'rgba(220, 38, 38, 1)',
+          'rgba(202, 138, 4, 1)',
+          'rgba(147, 51, 234, 1)',
+          'rgba(16, 185, 129, 1)',
         ],
         borderWidth: 2,
         hoverBackgroundColor: [
-          'rgba(236, 72, 153, 0.9)',
-          'rgba(239, 68, 68, 0.9)',
-          'rgba(251, 191, 36, 0.9)',
-          'rgba(59, 130, 246, 0.9)',
-          'rgba(34, 197, 94, 0.9)',
+          'rgba(107, 114, 128, 0.9)',
+          'rgba(220, 38, 38, 0.9)',
+          'rgba(202, 138, 4, 0.9)',
+          'rgba(147, 51, 234, 0.9)',
+          'rgba(16, 185, 129, 0.9)',
         ],
         hoverBorderWidth: 3,
       },

@@ -148,11 +148,11 @@ export const Projects = () => {
                                 className={cn(
                                   "flex items-center gap-2 px-3 py-2 rounded-md text-sm transition cursor-pointer",
                                   isSubActive 
-                                    ? "bg-accent text-primary font-medium" 
+                                    ? "bg-accent/40 border border-border/40 text-foreground font-medium" 
                                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                                 )}
                               >
-                                <subItem.icon className="h-4 w-4 flex-shrink-0" />
+                                <subItem.icon className={cn("h-4 w-4 flex-shrink-0", isSubActive ? "text-primary" : "text-muted-foreground")} />
                                 <span className="truncate">{subItem.label}</span>
                               </div>
                             </Link>
@@ -168,7 +168,7 @@ export const Projects = () => {
                 <p className="text-xs text-muted-foreground mb-2">No projects yet</p>
                 <button 
                   onClick={open}
-                  className="text-xs text-blue-500 hover:text-blue-600 transition-colors"
+                  className="text-xs text-purple-500 hover:text-purple-600 transition-colors"
                 >
                   Create your first project
                 </button>

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { PencilIcon, XIcon } from "lucide-react";
+import { PencilIcon, XIcon, SaveIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DottedSeparator } from "@/components/dotted-separator";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Task } from "../types";
 import { useUpdateTask } from "../api/use-update-task";
@@ -14,7 +15,8 @@ interface TaskDescriptionProps {
 
 export const TaskDescription = ({ task }: TaskDescriptionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(task.description);
+  const [value, setValue] = useState(task.description || "");
+  const [mode, setMode] = useState<"view" | "edit">("view");
 
   const { mutate, isPending } = useUpdateTask();
 
@@ -24,52 +26,81 @@ export const TaskDescription = ({ task }: TaskDescriptionProps) => {
       param: { taskId: task.$id }
     }, {
       onSuccess: () => {
-        setIsEditing(false);
+        setMode("view");
       }
     });
   };
 
+  const handleCancel = () => {
+    setValue(task.description || "");
+    setMode("view");
+  };
+
   return (
-    <div className="p-4 border rounded-lg min-h-[20rem] bg-muted">
-      <div className="flex items-center justify-between">
-        <p className="text-lg font-semibold">Description</p>
-        <Button onClick={() => setIsEditing((prev) => !prev)} size="sm" variant="secondary">
-          {isEditing ? (
-            <XIcon className="size-4 mr-2" />
-          ) : (
-            <PencilIcon className="size-4 mr-2" />
-          )}
-          {isEditing ? "Cancel" : "Edit"}
-        </Button>
-      </div>
-      <DottedSeparator className="my-4" />
-      {isEditing ? (
-        <div className="flex flex-col gap-y-4">
-          <Textarea
-            placeholder="Add a description..."
-            value={value}
-            rows={4}
-            onChange={(e) => setValue(e.target.value)}
-            disabled={isPending}
-          />
-          <Button
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between px-6 py-4 bg-card">
+        <CardTitle className="text-xl">Description</CardTitle>
+        {mode === "view" ? (
+          <Button 
+            onClick={() => setMode("edit")} 
+            variant="outline" 
             size="sm"
-            className="w-fit ml-auto"
-            onClick={handleSave}
-            disabled={isPending}
+            className="gap-2"
           >
-            {isPending ? "Saving..." : "Save Changes"}
+            <PencilIcon className="h-4 w-4" />
+            Edit
           </Button>
-        </div>
-      ) : (
-        <div>
-          {task.description || (
-            <span className="text-muted-foreground">
-              No description set
-            </span>
-          )}
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={handleCancel} 
+              variant="outline" 
+              size="sm"
+              className="gap-2"
+            >
+              <XIcon className="h-4 w-4" />
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              variant="default" 
+              size="sm"
+              className="gap-2"
+              disabled={isPending}
+            >
+              <SaveIcon className="h-4 w-4" />
+              {isPending ? "Saving..." : "Save"}
+            </Button>
+          </div>
+        )}
+      </CardHeader>
+      <CardContent className="px-6 py-4">
+        {mode === "edit" ? (
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Add a description for this task..."
+              value={value}
+              rows={8}
+              onChange={(e) => setValue(e.target.value)}
+              disabled={isPending}
+              className="resize-y min-h-[200px] focus:ring-primary"
+            />
+            <div className="text-xs text-muted-foreground">
+              Tip: You can use markdown to format your description
+            </div>
+          </div>
+        ) : (
+          <div className="min-h-[200px] prose prose-sm max-w-none">
+            {task.description ? (
+              <div className="whitespace-pre-wrap">{task.description}</div>
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm py-12">
+                No description provided. Click "Edit" to add details about this task.
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };

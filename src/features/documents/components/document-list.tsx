@@ -149,7 +149,7 @@ export const DocumentList = ({
             <CardContent className="pt-0 pb-5 flex flex-col flex-grow">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Badge className="text-xs font-medium px-3 py-1.5 bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200">
+                  <Badge className="text-xs font-medium px-3 py-1.5 bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200">
                     v{document.version}
                   </Badge>
                 </div>

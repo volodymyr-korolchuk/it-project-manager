@@ -17,7 +17,7 @@ interface KanbanCardProps {
 
 export const KanbanCard = ({ task }: KanbanCardProps) => {
   return (
-    <div className="bg-card border border-border/50 p-3 mb-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 space-y-3 group hover:border-border cursor-grab active:cursor-grabbing">
+    <div className="bg-card border-subtle p-3 mb-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 space-y-3 group hover:border-active cursor-grab active:cursor-grabbing">
       <div className="flex items-start justify-between gap-x-2">
         <p className="text-sm font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
           {task.name}

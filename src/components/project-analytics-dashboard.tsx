@@ -25,10 +25,10 @@ import { DottedSeparator } from "./dotted-separator";
 
 export const ProjectAnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
   const getPerformanceStatus = (rate: number) => {
-    if (rate >= 80) return { label: "Excellent", color: "bg-emerald-500", textColor: "text-emerald-700" };
-    if (rate >= 60) return { label: "Good", color: "bg-blue-500", textColor: "text-blue-700" };
-    if (rate >= 40) return { label: "Fair", color: "bg-yellow-500", textColor: "text-yellow-700" };
-    return { label: "Needs Improvement", color: "bg-red-500", textColor: "text-red-700" };
+    if (rate >= 80) return { label: "Excellent", color: "bg-emerald-600", textColor: "text-white" };
+    if (rate >= 60) return { label: "Good", color: "bg-purple-600", textColor: "text-white" };
+    if (rate >= 40) return { label: "Fair", color: "bg-yellow-600", textColor: "text-white" };
+    return { label: "Needs Improvement", color: "bg-red-600", textColor: "text-white" };
   };
 
   const performanceStatus = getPerformanceStatus(data.completionRate);
@@ -41,7 +41,7 @@ export const ProjectAnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Target className="h-4 w-4 text-blue-600" />
+              <Target className="h-4 w-4 text-purple-600" />
               Total Tasks
             </CardTitle>
           </CardHeader>
@@ -74,7 +74,7 @@ export const ProjectAnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-yellow-600" />
+              <Clock className="h-4 w-4 text-purple-600" />
               Avg. Completion
             </CardTitle>
           </CardHeader>
@@ -274,13 +274,13 @@ export const ProjectAnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType
                   )}
 
                   {data.averageDaysToComplete > 10 && (
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <Clock className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <Clock className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
                       <div>
-                        <div className="font-medium text-blue-800 dark:text-blue-300">
-                          Long Completion Times
+                        <div className="font-medium text-purple-800 dark:text-purple-300">
+                          Time Management Tip
                         </div>
-                        <div className="text-sm text-blue-700 dark:text-blue-400">
+                        <div className="text-sm text-purple-700 dark:text-purple-400">
                           Tasks are taking longer than expected. Consider breaking down complex tasks.
                         </div>
                       </div>

@@ -45,7 +45,7 @@ export const SignUpCard = () => {
   };
 
   return (
-    <Card className="w-full h-full md:w-[487px] border border-white/25 bg-[white_2%] backdrop-blur-xl brightness-110 shadow-xl">
+    <Card className="w-full h-full md:w-[487px] border border-border/30 bg-card/90 backdrop-blur-xl shadow-xl">
       <CardHeader className="text-center p-6 pb-4">
         <CardTitle className="text-2xl font-medium">
           Create account
@@ -75,7 +75,7 @@ export const SignUpCard = () => {
                       {...field}
                       type="text"
                       placeholder="Enter your name"
-                      className="h-11 border-white/25"
+                      className="h-11 border-border/50"
                     />
                   </FormControl>
                   <FormMessage />
@@ -92,7 +92,7 @@ export const SignUpCard = () => {
                       {...field}
                       type="email"
                       placeholder="Enter email address"
-                      className="h-11 border-white/25"
+                      className="h-11 border-border/50"
                     />
                   </FormControl>
                   <FormMessage />
@@ -109,7 +109,7 @@ export const SignUpCard = () => {
                       {...field}
                       type="password"
                       placeholder="Enter password"
-                      className="h-11 border-white/25"
+                      className="h-11 border-border/50"
                     />
                   </FormControl>
                   <FormMessage />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { CalendarIcon, PlusIcon, SettingsIcon } from "lucide-react";
+import { CalendarIcon, PlusIcon, SettingsIcon, User, Clock } from "lucide-react";
 
 import { Task } from "@/features/tasks/types";
 import { Member } from "@/features/members/types";
@@ -15,12 +15,15 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
 import { TimeTrackingButton } from "@/features/tasks/components/time-tracking-button";
+import { Badge } from "@/components/ui/badge";
+import { snakeCaseToTitleCase } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
+import { Page } from "@/components/page";
 
 export const WorkspaceIdClient = () => {
   const workspaceId = useWorkspaceId();
@@ -43,7 +46,7 @@ export const WorkspaceIdClient = () => {
   }
 
   return (
-    <div className="h-full flex flex-col space-y-6">
+    <Page className="space-y-6">
       {/* Tasks-Focused Layout */}
       <div className="grid grid-cols-1 gap-6">
         {/* Tasks Section - Hero/Main Focus Area */}
@@ -64,7 +67,7 @@ export const WorkspaceIdClient = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Page>
   );
 };
 
@@ -76,17 +79,6 @@ interface TaskListProps {
 export const TaskList = ({ data, total }: TaskListProps) => {
   const workspaceId = useWorkspaceId();
   const { open: createTask } = useCreateTaskModal();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "BACKLOG": return "bg-gray-500/10 text-gray-400 border-gray-500/20";
-      case "TODO": return "bg-blue-500/10 text-blue-400 border-blue-500/20";
-      case "IN_PROGRESS": return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
-      case "IN_REVIEW": return "bg-purple-500/10 text-purple-400 border-purple-500/20";
-      case "DONE": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-      default: return "bg-gray-500/10 text-gray-400 border-gray-500/20";
-    }
-  };
 
   return (
     <div className="space-y-8">
@@ -179,9 +171,9 @@ export const TaskList = ({ data, total }: TaskListProps) => {
                         {/* Task metadata */}
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${getStatusColor(task.status)}`}>
-                              {task.status.replace('_', ' ')}
-                            </span>
+                            <Badge variant={task.status}>
+                              {snakeCaseToTitleCase(task.status)}
+                            </Badge>
                             
                             {task.project && (
                               <span className="px-2 py-1 bg-muted/40 text-muted-foreground rounded-md text-xs font-medium truncate max-w-[100px]">
@@ -190,17 +182,34 @@ export const TaskList = ({ data, total }: TaskListProps) => {
                             )}
                           </div>
                           
+                          {/* Assignee information */}
+                          <div className="flex items-center gap-2 text-xs">
+                            <MemberAvatar
+                              name={task.assignee?.name}
+                              className="h-5 w-5"
+                            />
+                            <span className="text-muted-foreground">
+                              {task.assignee?.name || "Unassigned"}
+                            </span>
+                          </div>
+                          
                           <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-2 text-muted-foreground/70">
-                              <CalendarIcon className="size-3" />
-                              <span>Due {formatDistanceToNow(new Date(task.dueDate))} from now</span>
+                            <div className="flex flex-col gap-1.5 mt-1">
+                              <div className="flex items-center gap-2">
+                                <Clock className="size-3 text-blue-400/70" />
+                                <span className="text-muted-foreground">Started {formatDistanceToNow(new Date(task.$createdAt))} ago</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CalendarIcon className="size-3 text-purple-400/70" />
+                                <span className="text-muted-foreground">Due {formatDistanceToNow(new Date(task.dueDate))} from now</span>
+                              </div>
                             </div>
                             
                             {/* Priority indicator */}
                             <div className="flex items-center gap-1">
                               <div className={`w-1.5 h-1.5 rounded-full ${
-                                task.status === "DONE" ? "bg-emerald-400/60" :
-                                new Date(task.dueDate) < new Date() ? "bg-red-400/60" : "bg-blue-400/60"
+                                task.status === "DONE" ? "bg-emerald-400/80" :
+                                new Date(task.dueDate) < new Date() ? "bg-red-400/80" : "bg-purple-400/80"
                               }`} />
                             </div>
                           </div>
@@ -324,7 +333,7 @@ export const ProjectList = ({ data, total }: ProjectListProps) => {
                         image={project.imageUrl}
                       />
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-foreground group-hover:text-blue-400 transition-colors line-clamp-1">
+                        <h3 className="text-sm font-medium text-foreground group-hover:text-purple-400 transition-colors line-clamp-1">
                           {project.name}
                         </h3>
                         <p className="text-xs text-muted-foreground/70 mt-0.5">
