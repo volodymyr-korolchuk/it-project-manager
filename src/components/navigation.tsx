@@ -27,7 +27,7 @@ const routes = [
     activeIcon: HiHome,
   },
   {
-    label: "My Tasks",
+    label: "Tasks",
     href: "/tasks",
     icon: HiOutlineClipboardList,
     activeIcon: HiClipboardList,

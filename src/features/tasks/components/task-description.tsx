@@ -30,7 +30,7 @@ export const TaskDescription = ({ task }: TaskDescriptionProps) => {
   };
 
   return (
-    <div className="p-4 border rounded-lg min-h-[20rem]">
+    <div className="p-4 border rounded-lg min-h-[20rem] bg-muted">
       <div className="flex items-center justify-between">
         <p className="text-lg font-semibold">Description</p>
         <Button onClick={() => setIsEditing((prev) => !prev)} size="sm" variant="secondary">
